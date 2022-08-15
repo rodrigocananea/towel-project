@@ -5,11 +5,15 @@
  */
 package com.towel.swing.table;
 
-import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Frame;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
 /**
@@ -34,6 +38,17 @@ public class TableFilterWildCard extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
 
+        KeyStroke escapeKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
+        Action escapeAction = new AbstractAction() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+            }
+        };
+        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeKeyStroke, "ESCAPE");
+        getRootPane().getActionMap().put("ESCAPE", escapeAction);
+
         jlTitle.setText(title);
         jlTitle.setToolTipText(title);
 
@@ -42,6 +57,7 @@ public class TableFilterWildCard extends javax.swing.JDialog {
         }
 
         SwingUtilities.invokeLater(() -> jtfMsg.requestFocus());
+
     }
 
     @SuppressWarnings("unchecked")
@@ -56,13 +72,14 @@ public class TableFilterWildCard extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Filtro");
+        setUndecorated(true);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosed(java.awt.event.WindowEvent evt) {
                 formWindowClosed(evt);
             }
         });
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        jPanel1.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEtchedBorder(), javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10)));
 
         jlTitle.setText("Testando");
 
@@ -98,7 +115,7 @@ public class TableFilterWildCard extends javax.swing.JDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jlTitle, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jtfMsg, javax.swing.GroupLayout.DEFAULT_SIZE, 284, Short.MAX_VALUE))
+                    .addComponent(jtfMsg, javax.swing.GroupLayout.DEFAULT_SIZE, 240, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -156,7 +173,9 @@ public class TableFilterWildCard extends javax.swing.JDialog {
     // End of variables declaration//GEN-END:variables
 
     private void returnValue() {
-        value = jtfMsg.getText();
-        dispose();
+        if (jtfMsg.getText().trim().length() > 0) {
+            value = jtfMsg.getText();
+            dispose();
+        }
     }
 }
