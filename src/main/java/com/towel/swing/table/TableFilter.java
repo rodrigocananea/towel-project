@@ -340,7 +340,7 @@ public class TableFilter extends AbstractTableModel {
                         text = ((RegexFilter) TableFilter.this.filters.get(e.getModelIndex())).getRegex();
                     }
                     
-                    String value = TableFilterWildCard.getValue(GuiUtils.getOwnerWindow(TableFilter.this.header), TableFilter.this.popup_text, text);
+                    String value = TableFilterWildCard.getValue(TableFilter.this.popup_text, text);
 //                    String value2 = JOptionPane.showInputDialog(GuiUtils.getOwnerWindow(TableFilter.this.header), TableFilter.this.popup_text, text);
                     if (value != null) {
                         TableFilter.this.setFilterByRegex(e.getModelIndex(), value);

@@ -22,15 +22,15 @@ public class TableFilterWildCard extends javax.swing.JDialog {
 
     private static String value;
 
-    public static String getValue(Component parent, String title, String initialMsg) {
+    public static String getValue(String title, String initialMsg) {
         if (tableFilterWildCard == null) {
-            tableFilterWildCard = new TableFilterWildCard(null, true, (Frame) parent, title, initialMsg);
+            tableFilterWildCard = new TableFilterWildCard(null, true, title, initialMsg);
         }
         tableFilterWildCard.setVisible(true);
         return value;
     }
 
-    public TableFilterWildCard(Frame parent, boolean modal, Component parentComponent, String title, String initialMsg) {
+    public TableFilterWildCard(Frame parent, boolean modal, String title, String initialMsg) {
         super(parent, modal);
         initComponents();
 
