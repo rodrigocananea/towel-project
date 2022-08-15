@@ -1,7 +1,6 @@
 package com.towel.swing.table;
 
 import com.towel.cfg.TowelConfig;
-import com.towel.swing.GuiUtils;
 import com.towel.swing.TextUtils;
 import com.towel.swing.table.adapter.TableColumnModelAdapter;
 import com.towel.swing.table.headerpopup.HeaderPopupEvent;
@@ -23,7 +22,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
-import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.event.TableColumnModelEvent;
 import javax.swing.event.TableModelEvent;
@@ -390,69 +388,82 @@ public class TableFilter extends AbstractTableModel {
     /* access modifiers changed from: private */
  /* access modifiers changed from: public */
     private void onTableChanged(TableModelEvent e) {
-        switch (e.getType()) {
-            case 1:
-                int first = this.filteredRows.size();
-                int last = this.filteredRows.size();
-                for (int row = e.getFirstRow(); row <= e.getLastRow(); row++) {
-                    this.filteredRows.add(row);
-                    last++;
+        if (e.getType() == TableModelEvent.INSERT) {
+            int first = filteredRows.size();
+            int last = filteredRows.size();
+
+            for (int row = e.getFirstRow(); row <= e.getLastRow(); row++) {
+                filteredRows.add(row);
+                last++;
+            }
+
+            fireTableRowsInserted(first, last - 1);
+            upToDateColumns.clear(); // invalidate header popup
+        } else if (e.getType() == TableModelEvent.DELETE) {
+            if (!isFiltering()) {
+                fireTableRowsDeleted(e.getFirstRow(), e.getLastRow());
+                upToDateColumns.clear(); // invalidate header popup
+                return;
+            }
+
+            for (int row = e.getLastRow(); row >= e.getFirstRow(); row--) {
+                int index = filteredRows.indexOf(row);
+
+                if (index != -1) {
+                    filteredRows.remove(index);
+                    fireTableRowsDeleted(index, index);
                 }
-                fireTableRowsInserted(first, last + NO_COLUMN);
-                this.upToDateColumns.clear();
-                break;
-            case NO_COLUMN:
+            }
+
+            // shift up nRemoved times the index of filteredRows
+            int nRemoved = e.getLastRow() - e.getFirstRow() + 1;
+            for (int i = 0; i < filteredRows.size(); i++) {
+                if (filteredRows.get(i) > e.getLastRow()) {
+                    filteredRows.set(i, filteredRows.get(i) - nRemoved);
+                }
+            }
+
+            upToDateColumns.clear(); // invalidate header popup
+        } else if (e.getType() == TableModelEvent.UPDATE) {
+            if (e.getColumn() == TableModelEvent.ALL_COLUMNS) {
                 if (!isFiltering()) {
-                    fireTableRowsDeleted(e.getFirstRow(), e.getLastRow());
-                    this.upToDateColumns.clear();
+                    fireTableDataChanged();
+                    upToDateColumns.clear(); // invalidate header popup
                     return;
                 }
-                for (int row2 = e.getLastRow(); row2 >= e.getFirstRow(); row2 += NO_COLUMN) {
-                    int index = this.filteredRows.indexOf(row2);
-                    if (index != NO_COLUMN) {
-                        this.filteredRows.remove(index);
-                        fireTableRowsDeleted(index, index);
-                    }
-                }
-                int nRemoved = (e.getLastRow() - e.getFirstRow()) + 1;
-                for (int i = 0; i < this.filteredRows.size(); i++) {
-                    if (this.filteredRows.get(i) > e.getLastRow()) {
-                        this.filteredRows.set(i, this.filteredRows.get(i).intValue() - nRemoved);
-                    }
-                }
-                this.upToDateColumns.clear();
-                break;
-            case 0:
-                if (e.getColumn() != NO_COLUMN) {
-                    fireTableCellUpdated(e.getFirstRow(), e.getColumn());
-                    this.upToDateColumns.remove(e.getColumn());
-                } else if (!isFiltering()) {
-                    fireTableDataChanged();
-                    this.upToDateColumns.clear();
-                } else if (e.getLastRow() == Integer.MAX_VALUE) {
-                    Integer currentSortingColumn = this.sortingColumn;
-                    Sorting currentOrder = this.order;
-                    Map<Integer, Filter> currentFilters = new HashMap<>(this.filters);
-                    this.sortingColumn = (int) NO_COLUMN;
-                    this.order = Sorting.NONE;
-                    this.filters.clear();
+
+                if (e.getLastRow() == Integer.MAX_VALUE) {
+                    // TableDataChanged!
+                    Integer currentSortingColumn = sortingColumn;
+                    Sorting currentOrder = order;
+                    Map<Integer, Filter> currentFilters = new HashMap<Integer, Filter>(
+                            filters);
+
+                    sortingColumn = NO_COLUMN;
+                    order = Sorting.NONE;
+                    filters.clear();
                     updateFilter(false);
-                    this.sortingColumn = currentSortingColumn;
-                    this.order = currentOrder;
-                    this.filters.putAll(currentFilters);
+
+                    sortingColumn = currentSortingColumn;
+                    order = currentOrder;
+                    filters.putAll(currentFilters);
                     updateFilter();
-                } else {
-                    for (int row3 = e.getFirstRow(); row3 <= e.getLastRow(); row3++) {
-                        int index2 = this.filteredRows.indexOf(row3);
-                        if (index2 != NO_COLUMN) {
-                            fireTableRowsUpdated(index2, index2);
-                        }
-                    }
-                    this.upToDateColumns.clear();
+                    return;
                 }
-                break;
-            default:
-                break;
+
+                for (int row = e.getFirstRow(); row <= e.getLastRow(); row++) {
+                    int index = filteredRows.indexOf(row);
+                    if (index != -1) {
+                        fireTableRowsUpdated(index, index);
+                    }
+                }
+                upToDateColumns.clear(); // invalidate header popup
+            } else {
+                fireTableCellUpdated(e.getFirstRow(), e.getColumn());
+
+                // invalidate header popup from specific column
+                upToDateColumns.remove(e.getColumn());
+            }
         }
     }
 
