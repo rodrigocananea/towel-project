@@ -152,7 +152,8 @@ public class TableHeaderPopup {
             }
 
             JLabel label = (JLabel) c;
-
+            label.setOpaque(false);
+            
             GridBagConstraints gridBagConstraints = new GridBagConstraints();
             gridBagConstraints.weightx = 1.0;
 

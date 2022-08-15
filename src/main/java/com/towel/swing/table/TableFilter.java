@@ -4,7 +4,6 @@ import com.towel.cfg.TowelConfig;
 import com.towel.swing.GuiUtils;
 import com.towel.swing.TextUtils;
 import com.towel.swing.table.adapter.TableColumnModelAdapter;
-import com.towel.swing.table.headerpopup.HeaderButtonListener;
 import com.towel.swing.table.headerpopup.HeaderPopupEvent;
 import com.towel.swing.table.headerpopup.HeaderPopupListener;
 import com.towel.swing.table.headerpopup.TableHeaderPopup;
@@ -24,16 +23,15 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
-import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.event.TableColumnModelEvent;
 import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableModel;
 
 public class TableFilter extends AbstractTableModel {
+
     private static final Comparator<Object> COMPARABLE_COMPARATOR = new Comparator<Object>() {
         /* class com.towel.swing.table.TableFilter.AnonymousClass1 */
 
@@ -98,6 +96,7 @@ public class TableFilter extends AbstractTableModel {
     private Set<Integer> upToDateColumns;
 
     public interface Filter {
+
         boolean doFilter(Object obj);
     }
 
@@ -137,7 +136,7 @@ public class TableFilter extends AbstractTableModel {
     }
 
     /* access modifiers changed from: private */
-    /* access modifiers changed from: public */
+ /* access modifiers changed from: public */
     private void refreshHeader(int column) {
         this.tableHeaderPopup.getPopup(column).removeAllElements();
         if (!this.disableColumns.contains(Integer.valueOf(column))) {
@@ -279,7 +278,7 @@ public class TableFilter extends AbstractTableModel {
     }
 
     /* access modifiers changed from: private */
-    /* access modifiers changed from: public */
+ /* access modifiers changed from: public */
     private Comparator<Object> getColumnComparator(Integer column) {
         if (Comparable.class.isAssignableFrom(this.tableModel.getColumnClass(column.intValue()))) {
             return COMPARABLE_COMPARATOR;
@@ -288,7 +287,7 @@ public class TableFilter extends AbstractTableModel {
     }
 
     /* access modifiers changed from: private */
-    /* access modifiers changed from: public */
+ /* access modifiers changed from: public */
     private void updateColumnPopup(int column) {
         if (!this.upToDateColumns.contains(Integer.valueOf(column))) {
             this.upToDateColumns.add(Integer.valueOf(column));
@@ -326,43 +325,43 @@ public class TableFilter extends AbstractTableModel {
 
     private HeaderPopupListener getHeaderPopupListener() {
         if (this.listener == null) {
-            this.listener = new HeaderPopupListener() {
-                /* class com.towel.swing.table.TableFilter.AnonymousClass5 */
-
-                @Override // com.towel.swing.table.headerpopup.HeaderPopupListener
-                public void elementSelected(HeaderPopupEvent e) {
-                    if (e.getSource().equals(TableFilter.this.popup_itm_sort_asc)) {
-                        TableFilter.this.setSorting(e.getModelIndex(), Sorting.ASCENDING);
-                    } else if (e.getSource().equals(TableFilter.this.popup_itm_sort_desc)) {
-                        TableFilter.this.setSorting(e.getModelIndex(), Sorting.DESCENDING);
-                    } else if (e.getSource().equals(TableFilter.this.popup_itm_all)) {
-                        TableFilter.this.setSorting(e.getModelIndex(), Sorting.NONE);
-                        TableFilter.this.removeFilter(e.getModelIndex());
-                        TableFilter.this.tableHeaderPopup.setModified(e.getModelIndex(), false);
-                    } else if (e.getSource().equals(TableFilter.this.popup_customize)) {
-                        String text = "";
-                        if (TableFilter.this.filters.get(Integer.valueOf(e.getModelIndex())) instanceof RegexFilter) {
-                            text = ((RegexFilter) TableFilter.this.filters.get(Integer.valueOf(e.getModelIndex()))).getRegex();
-                        }
-                        String value = JOptionPane.showInputDialog(GuiUtils.getOwnerWindow(TableFilter.this.header), TableFilter.this.popup_text, text);
-                        if (value != null) {
-                            TableFilter.this.setFilterByRegex(e.getModelIndex(), value);
-                        }
-                    } else if (e.getSource().equals(TableFilter.this.popup_empty)) {
-                        TableFilter.this.setFilterByString(e.getModelIndex(), "");
-                    } else {
-                        TableFilter.this.setFilterByString(e.getModelIndex(), e.getSource().toString());
+            this.listener = (HeaderPopupEvent e) -> {
+                if (e.getSource().equals(TableFilter.this.popup_itm_sort_asc)) {
+                    TableFilter.this.setSorting(e.getModelIndex(), Sorting.ASCENDING);
+                } else if (e.getSource().equals(TableFilter.this.popup_itm_sort_desc)) {
+                    TableFilter.this.setSorting(e.getModelIndex(), Sorting.DESCENDING);
+                } else if (e.getSource().equals(TableFilter.this.popup_itm_all)) {
+                    TableFilter.this.setSorting(e.getModelIndex(), Sorting.NONE);
+                    TableFilter.this.removeFilter(e.getModelIndex());
+                    TableFilter.this.tableHeaderPopup.setModified(e.getModelIndex(), false);
+                } else if (e.getSource().equals(TableFilter.this.popup_customize)) {
+                    String text = "";
+                    if (TableFilter.this.filters.get(e.getModelIndex()) instanceof RegexFilter) {
+                        text = ((RegexFilter) TableFilter.this.filters.get(e.getModelIndex())).getRegex();
                     }
+                    
+                    String value = TableFilterWildCard.getValue(GuiUtils.getOwnerWindow(TableFilter.this.header), TableFilter.this.popup_text, text);
+//                    String value2 = JOptionPane.showInputDialog(GuiUtils.getOwnerWindow(TableFilter.this.header), TableFilter.this.popup_text, text);
+                    if (value != null) {
+                        TableFilter.this.setFilterByRegex(e.getModelIndex(), value);
+                    }
+                } else if (e.getSource().equals(TableFilter.this.popup_empty)) {
+                    TableFilter.this.setFilterByString(e.getModelIndex(), "");
+                } else {
+                    TableFilter.this.setFilterByString(e.getModelIndex(), e.getSource().toString());
                 }
-            };
+            } /* class com.towel.swing.table.TableFilter.AnonymousClass5 */ // com.towel.swing.table.headerpopup.HeaderPopupListener
+                    ;
         }
         return this.listener;
     }
 
+    @Override
     public int getColumnCount() {
         return this.tableModel.getColumnCount();
     }
 
+    @Override
     public int getRowCount() {
         if (isFiltering()) {
             return this.filteredRows.size();
@@ -370,6 +369,7 @@ public class TableFilter extends AbstractTableModel {
         return this.tableModel.getRowCount();
     }
 
+    @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         return this.tableModel.getValueAt(getModelRow(rowIndex), columnIndex);
     }
@@ -377,84 +377,75 @@ public class TableFilter extends AbstractTableModel {
     private void setTableValues(JTableHeader header2, TableModel tableModel2) {
         this.tableModel = tableModel2;
         this.tableHeaderPopup = new TableHeaderPopup(header2, tableModel2);
-        this.tableHeaderPopup.addButtonListener(new HeaderButtonListener() {
-            /* class com.towel.swing.table.TableFilter.AnonymousClass6 */
-
-            @Override // com.towel.swing.table.headerpopup.HeaderButtonListener
-            public void buttonClicked(HeaderPopupEvent e) {
-                TableFilter.this.updateColumnPopup(e.getModelIndex());
-            }
-        });
-        tableModel2.addTableModelListener(new TableModelListener() {
-            /* class com.towel.swing.table.TableFilter.AnonymousClass7 */
-
-            public void tableChanged(TableModelEvent e) {
-                TableFilter.this.onTableChanged(e);
-            }
-        });
+        this.tableHeaderPopup.addButtonListener((HeaderPopupEvent e) -> {
+            TableFilter.this.updateColumnPopup(e.getModelIndex());
+        } /* class com.towel.swing.table.TableFilter.AnonymousClass6 */ // com.towel.swing.table.headerpopup.HeaderButtonListener
+        );
+        tableModel2.addTableModelListener(TableFilter.this::onTableChanged);
         updateFilter();
     }
 
     /* access modifiers changed from: private */
-    /* access modifiers changed from: public */
+ /* access modifiers changed from: public */
     private void onTableChanged(TableModelEvent e) {
-        if (e.getType() == 1) {
-            int first = this.filteredRows.size();
-            int last = this.filteredRows.size();
-            for (int row = e.getFirstRow(); row <= e.getLastRow(); row++) {
-                this.filteredRows.add(Integer.valueOf(row));
-                last++;
-            }
-            fireTableRowsInserted(first, last + NO_COLUMN);
-            this.upToDateColumns.clear();
-        } else if (e.getType() == NO_COLUMN) {
-            if (!isFiltering()) {
-                fireTableRowsDeleted(e.getFirstRow(), e.getLastRow());
+        switch (e.getType()) {
+            case 1:
+                int first = this.filteredRows.size();
+                int last = this.filteredRows.size();
+                for (int row = e.getFirstRow(); row <= e.getLastRow(); row++) {
+                    this.filteredRows.add(row);
+                    last++;
+                }   fireTableRowsInserted(first, last + NO_COLUMN);
                 this.upToDateColumns.clear();
-                return;
-            }
-            for (int row2 = e.getLastRow(); row2 >= e.getFirstRow(); row2 += NO_COLUMN) {
-                int index = this.filteredRows.indexOf(Integer.valueOf(row2));
-                if (index != NO_COLUMN) {
-                    this.filteredRows.remove(index);
-                    fireTableRowsDeleted(index, index);
-                }
-            }
-            int nRemoved = (e.getLastRow() - e.getFirstRow()) + 1;
-            for (int i = 0; i < this.filteredRows.size(); i++) {
-                if (this.filteredRows.get(i).intValue() > e.getLastRow()) {
-                    this.filteredRows.set(i, Integer.valueOf(this.filteredRows.get(i).intValue() - nRemoved));
-                }
-            }
-            this.upToDateColumns.clear();
-        } else if (e.getType() == 0) {
-            if (e.getColumn() != NO_COLUMN) {
-                fireTableCellUpdated(e.getFirstRow(), e.getColumn());
-                this.upToDateColumns.remove(Integer.valueOf(e.getColumn()));
-            } else if (!isFiltering()) {
-                fireTableDataChanged();
-                this.upToDateColumns.clear();
-            } else if (e.getLastRow() == Integer.MAX_VALUE) {
-                Integer currentSortingColumn = this.sortingColumn;
-                Sorting currentOrder = this.order;
-                Map<Integer, Filter> currentFilters = new HashMap<>(this.filters);
-                this.sortingColumn = Integer.valueOf((int) NO_COLUMN);
-                this.order = Sorting.NONE;
-                this.filters.clear();
-                updateFilter(false);
-                this.sortingColumn = currentSortingColumn;
-                this.order = currentOrder;
-                this.filters.putAll(currentFilters);
-                updateFilter();
-            } else {
-                for (int row3 = e.getFirstRow(); row3 <= e.getLastRow(); row3++) {
-                    int index2 = this.filteredRows.indexOf(Integer.valueOf(row3));
-                    if (index2 != NO_COLUMN) {
-                        fireTableRowsUpdated(index2, index2);
+                break;
+            case NO_COLUMN:
+                if (!isFiltering()) {
+                    fireTableRowsDeleted(e.getFirstRow(), e.getLastRow());
+                    this.upToDateColumns.clear();
+                    return;
+                }   for (int row2 = e.getLastRow(); row2 >= e.getFirstRow(); row2 += NO_COLUMN) {
+                    int index = this.filteredRows.indexOf(row2);
+                    if (index != NO_COLUMN) {
+                        this.filteredRows.remove(index);
+                        fireTableRowsDeleted(index, index);
                     }
-                }
-                this.upToDateColumns.clear();
-            }
+                }   int nRemoved = (e.getLastRow() - e.getFirstRow()) + 1;
+                for (int i = 0; i < this.filteredRows.size(); i++) {
+                    if (this.filteredRows.get(i) > e.getLastRow()) {
+                        this.filteredRows.set(i, this.filteredRows.get(i).intValue() - nRemoved);
+                    }
+                }   this.upToDateColumns.clear();
+                break;
+            case 0:
+                if (e.getColumn() != NO_COLUMN) {
+                    fireTableCellUpdated(e.getFirstRow(), e.getColumn());
+                    this.upToDateColumns.remove(e.getColumn());
+                } else if (!isFiltering()) {
+                    fireTableDataChanged();
+                    this.upToDateColumns.clear();
+                } else if (e.getLastRow() == Integer.MAX_VALUE) {
+                    Integer currentSortingColumn = this.sortingColumn;
+                    Sorting currentOrder = this.order;
+                    Map<Integer, Filter> currentFilters = new HashMap<>(this.filters);
+                    this.sortingColumn = (int) NO_COLUMN;
+                    this.order = Sorting.NONE;
+                    this.filters.clear();
+                    updateFilter(false);
+                    this.sortingColumn = currentSortingColumn;
+                    this.order = currentOrder;
+                    this.filters.putAll(currentFilters);
+                    updateFilter();
+                } else {
+                    for (int row3 = e.getFirstRow(); row3 <= e.getLastRow(); row3++) {
+                        int index2 = this.filteredRows.indexOf(row3);
+                        if (index2 != NO_COLUMN) {
+                            fireTableRowsUpdated(index2, index2);
+                        }
+                    }
+                    this.upToDateColumns.clear();
+                }   break;
+            default:
+                break;
         }
     }
 
@@ -488,18 +479,22 @@ public class TableFilter extends AbstractTableModel {
         return NO_COLUMN;
     }
 
+    @Override
     public Class<?> getColumnClass(int columnIndex) {
         return this.tableModel.getColumnClass(columnIndex);
     }
 
+    @Override
     public String getColumnName(int column) {
         return this.tableModel.getColumnName(column);
     }
 
+    @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return this.tableModel.isCellEditable(getModelRow(rowIndex), columnIndex);
     }
 
+    @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         this.tableModel.setValueAt(aValue, getModelRow(rowIndex), columnIndex);
     }
@@ -550,6 +545,7 @@ public class TableFilter extends AbstractTableModel {
     }
 
     public static class StringFilter implements Filter {
+
         private String string = "";
 
         public StringFilter() {
@@ -574,6 +570,7 @@ public class TableFilter extends AbstractTableModel {
     }
 
     public static class RegexFilter implements Filter {
+
         private String regex = "";
 
         public RegexFilter() {
