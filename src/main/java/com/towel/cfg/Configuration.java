@@ -4,9 +4,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 public class Configuration {
+
     private File file;
     private Properties props;
 
@@ -14,9 +16,13 @@ public class Configuration {
         if (!f.exists()) {
             f.createNewFile();
         }
+        
         this.props = new Properties();
         this.file = f;
-        this.props.load(new FileInputStream(this.file));
+        
+        try (InputStream fileInput = new FileInputStream(this.file)) {
+            this.props.load(fileInput);
+        }
     }
 
     public StringConfiguration getCfg(String key) {
