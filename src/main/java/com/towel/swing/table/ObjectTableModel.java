@@ -39,6 +39,7 @@ public class ObjectTableModel<T> extends AbstractTableModel implements Iterable<
         this.editableCol[col] = Boolean.valueOf(editable);
     }
 
+    @Override
     public boolean isCellEditable(int i, int k) {
         if (this.editableCol == null || this.editableCol[k] == null) {
             return this.editDefault;
@@ -46,14 +47,17 @@ public class ObjectTableModel<T> extends AbstractTableModel implements Iterable<
         return this.editableCol[k].booleanValue();
     }
 
+     @Override
     public int getColumnCount() {
         return this.fields.length;
     }
 
+     @Override
     public int getRowCount() {
         return this.data.size();
     }
 
+     @Override
     public Object getValueAt(int arg0, int arg1) {
         try {
             return this.fields[arg1].getValue(this.data.get(arg0));
@@ -62,6 +66,7 @@ public class ObjectTableModel<T> extends AbstractTableModel implements Iterable<
         }
     }
 
+     @Override
     public void setValueAt(Object value, int arg0, int arg1) {
         try {
             this.fields[arg1].setValue(this.data.get(arg0), value);
@@ -75,6 +80,7 @@ public class ObjectTableModel<T> extends AbstractTableModel implements Iterable<
         return this.data.get(arg0);
     }
 
+     @Override
     public String getColumnName(int col) {
         return this.fields[col].getName();
     }
@@ -146,6 +152,7 @@ public class ObjectTableModel<T> extends AbstractTableModel implements Iterable<
         return this.fields[colIndex];
     }
 
+     @Override
     public Class<?> getColumnClass(int col) {
         return getColumnResolver(col).getFieldType();
     }
