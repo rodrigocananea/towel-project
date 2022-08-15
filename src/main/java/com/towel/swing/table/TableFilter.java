@@ -23,6 +23,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.event.TableColumnModelEvent;
 import javax.swing.event.TableModelEvent;
@@ -211,6 +212,7 @@ public class TableFilter extends AbstractTableModel {
 
     private void updateFilter() {
         updateFilter(true);
+
     }
 
     private void updateFilter(boolean fireDataChanged) {
@@ -339,7 +341,7 @@ public class TableFilter extends AbstractTableModel {
                     if (TableFilter.this.filters.get(e.getModelIndex()) instanceof RegexFilter) {
                         text = ((RegexFilter) TableFilter.this.filters.get(e.getModelIndex())).getRegex();
                     }
-                    
+
                     String value = TableFilterWildCard.getValue(TableFilter.this.popup_text, text);
 //                    String value2 = JOptionPane.showInputDialog(GuiUtils.getOwnerWindow(TableFilter.this.header), TableFilter.this.popup_text, text);
                     if (value != null) {
@@ -395,7 +397,8 @@ public class TableFilter extends AbstractTableModel {
                 for (int row = e.getFirstRow(); row <= e.getLastRow(); row++) {
                     this.filteredRows.add(row);
                     last++;
-                }   fireTableRowsInserted(first, last + NO_COLUMN);
+                }
+                fireTableRowsInserted(first, last + NO_COLUMN);
                 this.upToDateColumns.clear();
                 break;
             case NO_COLUMN:
@@ -403,18 +406,21 @@ public class TableFilter extends AbstractTableModel {
                     fireTableRowsDeleted(e.getFirstRow(), e.getLastRow());
                     this.upToDateColumns.clear();
                     return;
-                }   for (int row2 = e.getLastRow(); row2 >= e.getFirstRow(); row2 += NO_COLUMN) {
+                }
+                for (int row2 = e.getLastRow(); row2 >= e.getFirstRow(); row2 += NO_COLUMN) {
                     int index = this.filteredRows.indexOf(row2);
                     if (index != NO_COLUMN) {
                         this.filteredRows.remove(index);
                         fireTableRowsDeleted(index, index);
                     }
-                }   int nRemoved = (e.getLastRow() - e.getFirstRow()) + 1;
+                }
+                int nRemoved = (e.getLastRow() - e.getFirstRow()) + 1;
                 for (int i = 0; i < this.filteredRows.size(); i++) {
                     if (this.filteredRows.get(i) > e.getLastRow()) {
                         this.filteredRows.set(i, this.filteredRows.get(i).intValue() - nRemoved);
                     }
-                }   this.upToDateColumns.clear();
+                }
+                this.upToDateColumns.clear();
                 break;
             case 0:
                 if (e.getColumn() != NO_COLUMN) {
@@ -443,7 +449,8 @@ public class TableFilter extends AbstractTableModel {
                         }
                     }
                     this.upToDateColumns.clear();
-                }   break;
+                }
+                break;
             default:
                 break;
         }
