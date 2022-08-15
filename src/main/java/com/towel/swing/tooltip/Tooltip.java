@@ -113,6 +113,12 @@ public final class Tooltip extends JPanel {
     public void setText(String message) {
         jlMessage.setText("<html>" + message + "</html>");
     }
+    
+    public void setPosition(int position) {
+        this.position = position;
+        updateBalloonBorder();
+        repaint();
+    }
 
     void showPopup() {
         JRootPane rootPane = SwingUtilities.getRootPane(this.component);
