@@ -52,7 +52,7 @@ public class TextUtils {
     /**
      * Given an offset, returns the column number in a text component.
      *
-     * @param offset Offset position
+     * @param txtCmp
      * @return Column number starting in 0.
      */
     public static int getCaretColumn(JTextComponent txtCmp) {
@@ -63,6 +63,7 @@ public class TextUtils {
     /**
      * Given an offset, returns the column number in a text component.
      *
+     * @param txtCmp
      * @param offset Offset position
      * @return Column number starting in 0.
      */
@@ -73,7 +74,8 @@ public class TextUtils {
     /**
      * Given an offset, returns the offset where the line begins.
      *
-     * @param offset Offset position.
+     * @param txtCmp
+     * @param offset position.
      * @return Offset where the line begins.
      */
     public static int getOffsetStartLine(JTextComponent txtCmp, int offset) {
@@ -84,7 +86,7 @@ public class TextUtils {
      * Given an offset, returns the offset where the line begins.
      *
      * @param doc JTextComponent document
-     * @param offset Offset position.
+     * @param offset position.
      * @return Offset where the line begins.
      */
     public static int getOffsetStartLine(Document doc, int offset) {
@@ -95,7 +97,8 @@ public class TextUtils {
     /**
      * Given an offset, returns the offset where the line ends.
      *
-     * @param offset Offset position.
+     * @param txtCmp
+     * @param offset position.
      * @return Offset where the line ends.
      */
     public static int getOffsetEndLine(JTextComponent txtCmp, int offset) {
@@ -106,7 +109,7 @@ public class TextUtils {
      * Given an offset, returns the offset where the line ends.
      *
      * @param doc JTextComponent document
-     * @param offset Offset position.
+     * @param offset position.
      * @return Offset where the line ends.
      */
     public static int getOffsetEndLine(Document doc, int offset) {
@@ -117,6 +120,7 @@ public class TextUtils {
     /**
      * Given a line returns the offset number where the line starts.
      *
+     * @param txtCmp
      * @param line Line number
      * @return Offset number
      */
@@ -143,6 +147,7 @@ public class TextUtils {
     /**
      * Given a line returns the offset number where the line ends.
      *
+     * @param txtCmp
      * @param line Line number
      * @return Offset number
      */
@@ -169,6 +174,7 @@ public class TextUtils {
     /**
      * Count the line number.
      *
+     * @param txtCmp
      * @return Amount of lines.
      */
     public static int countLines(JTextComponent txtCmp) {
@@ -186,9 +192,10 @@ public class TextUtils {
     }
 
     /**
-     * Get number of rows in the content being shown. Independent of the text's
-     * size.
+     * Get number of rows in the content being shown.Independent of the text's
+ size.
      *
+     * @param txtCmp
      * @return Amount of rows.
      */
     public static int getRows(JTextComponent txtCmp) {
