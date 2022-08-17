@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.rodrigocananea</groupId>
     <artifactId>towel-project</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3-SNAPSHOT</version>
     <packaging>jar</packaging>
     
     <name>towel-project</name>
@@ -22,7 +22,7 @@
         <connection>scm:git:git://github.com/rodrigocananea/towel-project.git</connection>
         <developerConnection>scm:git:git@github.com:rodrigocananea/towel-project.git</developerConnection>
         <url>https://github.com/rodrigocananea/towel-project</url>
-        <tag>towel-project-1.0.2</tag>
+        <tag>towel-project-1.0.0</tag>
     </scm>
 
     <properties>
