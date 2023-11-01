@@ -9,6 +9,7 @@ import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
 public class ObjectTableModel<T> extends AbstractTableModel implements Iterable<T> {
+
     private List<T> data;
     private boolean editDefault;
     private Boolean[] editableCol;
@@ -36,7 +37,14 @@ public class ObjectTableModel<T> extends AbstractTableModel implements Iterable<
     }
 
     public void setColEditable(int col, boolean editable) {
-        this.editableCol[col] = Boolean.valueOf(editable);
+        this.editableCol[col] = editable;
+    }
+
+    public void setColEditable(String colName, boolean editable) {
+        int col = findColumn(colName);
+        if (col != -1) {
+            this.editableCol[col] = editable;
+        }
     }
 
     @Override
@@ -44,20 +52,20 @@ public class ObjectTableModel<T> extends AbstractTableModel implements Iterable<
         if (this.editableCol == null || this.editableCol[k] == null) {
             return this.editDefault;
         }
-        return this.editableCol[k].booleanValue();
+        return this.editableCol[k];
     }
 
-     @Override
+    @Override
     public int getColumnCount() {
         return this.fields.length;
     }
 
-     @Override
+    @Override
     public int getRowCount() {
         return this.data.size();
     }
 
-     @Override
+    @Override
     public Object getValueAt(int arg0, int arg1) {
         try {
             return this.fields[arg1].getValue(this.data.get(arg0));
@@ -66,7 +74,7 @@ public class ObjectTableModel<T> extends AbstractTableModel implements Iterable<
         }
     }
 
-     @Override
+    @Override
     public void setValueAt(Object value, int arg0, int arg1) {
         try {
             this.fields[arg1].setValue(this.data.get(arg0), value);
@@ -80,7 +88,7 @@ public class ObjectTableModel<T> extends AbstractTableModel implements Iterable<
         return this.data.get(arg0);
     }
 
-     @Override
+    @Override
     public String getColumnName(int col) {
         return this.fields[col].getName();
     }
@@ -152,7 +160,7 @@ public class ObjectTableModel<T> extends AbstractTableModel implements Iterable<
         return this.fields[colIndex];
     }
 
-     @Override
+    @Override
     public Class<?> getColumnClass(int col) {
         return getColumnResolver(col).getFieldType();
     }
