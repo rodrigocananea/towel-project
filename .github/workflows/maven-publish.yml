@@ -21,13 +21,8 @@ jobs:
       with:
         java-version: '8'
         distribution: 'temurin'
-        server-id: github
-        settings-path: ${{ github.workspace }} # location for the settings.xml file
-
-    - name: Build with Maven
-      run: mvn -B package --file pom.xml
 
     - name: Publish to GitHub Packages Apache Maven
-      run: mvn --batch-mode deploy -Dmaven.test.skip -P github
+      run: mvn --batch-mode deploy -Dmaven.test.skip
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.JAVA_TOKEN }}
